@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import stat
 import sys
 import tomllib
@@ -65,9 +66,23 @@ def load_document(path: Path) -> Document:
         else:
             data = json.loads(raw.decode("utf-8-sig"))
     except (ValueError, UnicodeDecodeError) as e:  # json.JSONDecodeError and TOMLDecodeError are ValueErrors
-        err = f"{type(e).__name__}: {e}"
+        err = _describe_parse_error(e)
     kind = KIND_UNKNOWN if err else classify(path, data)
     return Document(path=str(path), kind=kind, data=data, sha256=sha, size=len(raw), mode=mode, parse_error=err)
+
+
+def _describe_parse_error(e: Exception) -> str:
+    """Type and position only. Message wording differs between Python versions, and golden
+    reports must be byte-identical on every supported interpreter."""
+    name = type(e).__name__
+    lineno = getattr(e, "lineno", None)
+    colno = getattr(e, "colno", None)
+    if lineno is not None and colno is not None:
+        return f"{name} at line {lineno} column {colno}"
+    m = re.search(r"at line (\d+), column (\d+)", str(e))  # tomllib embeds the position in the message
+    if m:
+        return f"{name} at line {m.group(1)} column {m.group(2)}"
+    return name
 
 
 def default_locations() -> list[Path]:
