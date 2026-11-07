@@ -21,7 +21,7 @@ def gen001(doc: Document) -> Iterator[Finding]:
     meta = _m("GEN001")
     if doc.parse_error:
         yield finding(meta, doc, "", doc.parse_error[:160], severity="LOW", title="File could not be parsed",
-                      remediation="Fix the syntax error; until then no rule has evaluated this file.")
+                      remediation="Fix the syntax error (`python -m json.tool FILE` or `python -c \"import tomllib,sys;tomllib.load(open(sys.argv[1],'rb'))\" FILE` shows the position); until then no rule has evaluated this file.")
     elif doc.kind == KIND_UNKNOWN:
         yield finding(meta, doc, "", "unrecognised layout",
                       title="File not recognised as an agent configuration",

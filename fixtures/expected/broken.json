@@ -16,9 +16,9 @@
       "title": "File could not be parsed",
       "file": "fixtures/broken.json",
       "location": "",
-      "evidence": "JSONDecodeError at line 1 column 42",
+      "evidence": "JSONDecodeError",
       "rationale": "An unparseable or unrecognised file is not audited. Silence here would be a false 'clean' result, so it is reported explicitly.",
-      "remediation": "Fix the syntax error; until then no rule has evaluated this file."
+      "remediation": "Fix the syntax error (`python -m json.tool FILE` or `python -c \"import tomllib,sys;tomllib.load(open(sys.argv[1],'rb'))\" FILE` shows the position); until then no rule has evaluated this file."
     }
   ],
   "summary": {
@@ -27,7 +27,7 @@
     "LOW": 1,
     "INFO": 0
   },
-  "report_sha256": "26b39167593cd04331d1b3366cd9fa214510a601efc4817d5a848ae5bfe8d0ae",
+  "report_sha256": "144ae46500fe59927d333623cb0aa8ed920741964e22a8d09112b72d44ec0635",
   "hash_covers": [
     "inputs",
     "findings"

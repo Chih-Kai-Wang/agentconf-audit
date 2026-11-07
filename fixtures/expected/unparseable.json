@@ -16,9 +16,9 @@
       "title": "File could not be parsed",
       "file": "fixtures/unparseable.toml",
       "location": "",
-      "evidence": "TOMLDecodeError at line 1 column 25",
+      "evidence": "TOMLDecodeError",
       "rationale": "An unparseable or unrecognised file is not audited. Silence here would be a false 'clean' result, so it is reported explicitly.",
-      "remediation": "Fix the syntax error; until then no rule has evaluated this file."
+      "remediation": "Fix the syntax error (`python -m json.tool FILE` or `python -c \"import tomllib,sys;tomllib.load(open(sys.argv[1],'rb'))\" FILE` shows the position); until then no rule has evaluated this file."
     }
   ],
   "summary": {
@@ -27,7 +27,7 @@
     "LOW": 1,
     "INFO": 0
   },
-  "report_sha256": "859fdc610922490fdd0d5462df123078e37077ec6111c27a8f85314804f43a51",
+  "report_sha256": "3b379b296b712b7253362b7d142df669518defa4bcc191e3106f92e9bd430a3c",
   "hash_covers": [
     "inputs",
     "findings"
