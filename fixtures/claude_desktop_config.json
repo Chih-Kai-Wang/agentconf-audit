@@ -1,0 +1,9 @@
+{
+  "preferences": {
+    "bypassPermissionsOptInByAccount": { "acct-1": true },
+    "bypassPermissionsGateByAccount": { "acct-1": false }
+  },
+  "mcpServers": {
+    "notes": { "command": "node", "args": ["/Users/me/mcp/notes/index.js"] }
+  }
+}

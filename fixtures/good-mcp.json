@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "/usr/local/bin/mcp-server-filesystem",
+      "args": ["/Users/me/code/project-a", "/Users/me/code/project-b"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github@2025.4.8"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+    },
+    "remote": {
+      "type": "http",
+      "url": "https://tools.example.invalid/mcp",
+      "headers": { "Authorization": "Bearer ${TOOLS_TOKEN}" }
+    },
+    "local-dev": {
+      "type": "http",
+      "url": "http://127.0.0.1:8931/mcp"
+    }
+  }
+}

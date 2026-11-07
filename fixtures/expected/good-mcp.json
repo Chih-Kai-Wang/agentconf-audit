@@ -1,0 +1,35 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/good-mcp.json",
+      "kind": "mcp-servers-json",
+      "sha256": "f1205d49e6e742832a5ddc94320941b6a07f6a8a47866cb8a10082a31b4a5232",
+      "bytes": 610
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "MCP003",
+      "severity": "INFO",
+      "title": "MCP server `local-dev` uses plaintext HTTP to loopback",
+      "file": "fixtures/good-mcp.json",
+      "location": "/mcpServers/local-dev/url",
+      "evidence": "http://127.0.0.1:8931/mcp",
+      "rationale": "Tool calls and results (often including file contents) cross the network unencrypted and can be read or modified in transit; a modified tool result is a prompt-injection vector.",
+      "remediation": "Fine for a local process; confirm nothing else on the machine can bind that port."
+    }
+  ],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0,
+    "INFO": 1
+  },
+  "report_sha256": "6d2d239af0f732aae405e30b0d178f5008dbe995b46a9f80671f27593f39e893",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

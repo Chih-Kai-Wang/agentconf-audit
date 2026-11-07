@@ -1,0 +1,35 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/unrelated.json",
+      "kind": "unknown",
+      "sha256": "a139c412cae29911940ae1fefef8d5b1add11af43233e8dc5281b8103dac018c",
+      "bytes": 36
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "GEN001",
+      "severity": "INFO",
+      "title": "File not recognised as an agent configuration",
+      "file": "fixtures/unrelated.json",
+      "location": "",
+      "evidence": "unrecognised layout",
+      "rationale": "An unparseable or unrecognised file is not audited. Silence here would be a false 'clean' result, so it is reported explicitly.",
+      "remediation": "Nothing was evaluated. Open an issue with the layout if it should be supported."
+    }
+  ],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0,
+    "INFO": 1
+  },
+  "report_sha256": "15b2a30152bc3c14d783fc9fc2340497c754f4cede53dfb244fe1f513128dc6b",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

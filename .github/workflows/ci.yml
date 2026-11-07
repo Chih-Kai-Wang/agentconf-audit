@@ -1,0 +1,28 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --group dev
+      - run: uv run pytest -q
+      - name: Self-audit the fixtures (expected to fail on the bad ones)
+        run: |
+          uv run agentconf-audit scan fixtures/good-claude-settings.json fixtures/good-mcp.json fixtures/good-codex.toml --disable GEN002
+          ! uv run agentconf-audit scan fixtures/bad-claude-settings.json --disable GEN002 >/dev/null
+      - name: Docs drift
+        run: uv run agentconf-audit rules --markdown | diff - docs/RULES.md

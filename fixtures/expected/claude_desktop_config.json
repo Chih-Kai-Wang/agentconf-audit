@@ -1,0 +1,35 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/claude_desktop_config.json",
+      "kind": "claude-desktop-config",
+      "sha256": "6d92d389866156977db579b4f629c167508788ea106e550a5921fc65da16daf3",
+      "bytes": 244
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "CC003",
+      "severity": "MEDIUM",
+      "title": "Desktop bypass-permissions mode opted in for an account",
+      "file": "fixtures/claude_desktop_config.json",
+      "location": "/preferences/bypassPermissionsOptInByAccount/acct-1",
+      "evidence": "true",
+      "rationale": "`permissions.defaultMode` of `bypassPermissions`/`dontAsk`, `skipDangerousModePermissionPrompt`, or the Desktop bypass opt-in removes the human from every tool call.",
+      "remediation": "Leave opted-in only while you need it; sessions in this mode act without confirmation."
+    }
+  ],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 1,
+    "LOW": 0,
+    "INFO": 0
+  },
+  "report_sha256": "f3d9df87374f54aaf812298ec18dbc053813c89a3ab8b55fef4a888b56185535",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

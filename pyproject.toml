@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentconf-audit"
+version = "0.1.0"
+description = "Static security audit of AI coding-agent configuration (Claude Code, Claude Desktop, MCP, Codex) with evidence-attached, replayable reports."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Chih-Kai Wang" }]
+keywords = ["security", "audit", "mcp", "claude-code", "codex", "agent", "supply-chain"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Security",
+  "Environment :: Console",
+]
+dependencies = []
+
+[project.scripts]
+agentconf-audit = "agentconf_audit.cli:main"
+
+[project.urls]
+Repository = "https://github.com/f0909172434/agentconf-audit"
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agentconf_audit"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

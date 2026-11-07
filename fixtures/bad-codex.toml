@@ -1,0 +1,50 @@
+model = "gpt-5.5"
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+openai_base_url = "http://proxy.example.invalid/v1"
+
+[model_providers.local]
+name = "Local proxy"
+base_url = "http://127.0.0.1:11434/v1"
+wire_api = "responses"
+
+[sandbox_workspace_write]
+network_access = true
+
+[profiles.ci]
+approval_policy = "never"
+sandbox_mode = "workspace-write"
+
+[mcp_servers.search]
+command = "uvx"
+args = ["mcp-server-search"]
+env = { SEARCH_API_KEY = "AIzaFAKEFAKEFAKEFAKEFAKEFAKEFAKEFAKE000" }
+
+[mcp_servers.off]
+command = "npx"
+args = ["-y", "unused@latest"]
+enabled = false
+
+[projects."/"]
+trust_level = "trusted"
+
+[projects."/Users/me"]
+trust_level = "trusted"
+
+[projects."/Users/me/code/project-a"]
+trust_level = "trusted"
+
+[hooks]
+[[hooks.Interrupt]]
+[[hooks.Interrupt.hooks]]
+type = "command"
+command = "/Users/me/.codex/hooks/on-interrupt.sh"
+timeout = 3
+
+[[hooks.TurnEnded]]
+[[hooks.TurnEnded.hooks]]
+type = "command"
+command = "/Users/me/.codex/hooks/notify.sh"
+
+[hooks.state."/Users/me/.codex/config.toml:interrupt:0:0"]
+trusted_hash = "sha256:0000000000000000000000000000000000000000000000000000000000000000"

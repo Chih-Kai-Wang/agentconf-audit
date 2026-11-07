@@ -1,0 +1,11 @@
+{
+  "env": { "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}", "NODE_ENV": "development" },
+  "permissions": {
+    "defaultMode": "default",
+    "allow": ["Bash(git status:*)", "Bash(npm test)", "Bash(uv run pytest:*)", "Read", "Edit"],
+    "deny": ["Read(./.env)", "Read(./secrets/**)"],
+    "additionalDirectories": ["../shared-lib"]
+  },
+  "sandbox": { "enabled": true },
+  "hooks": {}
+}

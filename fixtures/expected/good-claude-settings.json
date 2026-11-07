@@ -1,0 +1,24 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/good-claude-settings.json",
+      "kind": "claude-code-settings",
+      "sha256": "9575fe65e80ab9a35627c164e50d3d424d42247dceb1becec435727701c0257e",
+      "bytes": 386
+    }
+  ],
+  "findings": [],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0,
+    "INFO": 0
+  },
+  "report_sha256": "bf9382646a818778d9c459370ebacbb6b388ba09587f7bf23824a47a1899a0af",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

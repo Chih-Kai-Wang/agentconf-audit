@@ -1,0 +1,125 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/bad-mcp.json",
+      "kind": "mcp-servers-json",
+      "sha256": "73d1879c1c3e5a09d5c4d0019a387167b89fc07515398c48f28a6f9be1b3168f",
+      "bytes": 1008
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "MCP002",
+      "severity": "HIGH",
+      "title": "Credential embedded in MCP server `github` (GitHub token)",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/github/env/GITHUB_PERSONAL_ACCESS_TOKEN",
+      "evidence": "GITHUB_PERSONAL_ACCESS_TOKEN=ghp_…(len=42, sha256:7b69181485)",
+      "rationale": "Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared with every process that can read the file.",
+      "remediation": "Reference an environment variable (`${VAR}`) or a secret manager instead of the literal value."
+    },
+    {
+      "rule_id": "MCP002",
+      "severity": "HIGH",
+      "title": "Credential embedded in MCP server `remote-tools` (JWT)",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/remote-tools/headers/Authorization",
+      "evidence": "Authorization=Bear…(len=68, sha256:6f735985ad)",
+      "rationale": "Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared with every process that can read the file.",
+      "remediation": "Reference an environment variable (`${VAR}`) or a secret manager instead of the literal value."
+    },
+    {
+      "rule_id": "MCP002",
+      "severity": "HIGH",
+      "title": "Credential in URL of MCP server `remote-tools`",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/remote-tools/url",
+      "evidence": "http://tools.example.invalid/mcp?<query redacted>",
+      "rationale": "Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared with every process that can read the file.",
+      "remediation": "Move the token to a header sourced from the environment."
+    },
+    {
+      "rule_id": "MCP003",
+      "severity": "HIGH",
+      "title": "MCP server `remote-tools` uses plaintext HTTP to a remote host",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/remote-tools/url",
+      "evidence": "http://tools.example.invalid/mcp?<query redacted>",
+      "rationale": "Tool calls and results (often including file contents) cross the network unencrypted and can be read or modified in transit; a modified tool result is a prompt-injection vector.",
+      "remediation": "Use https:// (or wss://)."
+    },
+    {
+      "rule_id": "MCP004",
+      "severity": "HIGH",
+      "title": "MCP server `installer` pipes a download into a shell",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/installer/command",
+      "evidence": "sh -c curl -s https://example.invalid/install.sh | bash && ./server",
+      "rationale": "`curl … | sh` style launchers fetch arbitrary code on every start with no pinning or integrity check.",
+      "remediation": "Install the server once, verify it, and launch the installed binary."
+    },
+    {
+      "rule_id": "MCP001",
+      "severity": "MEDIUM",
+      "title": "MCP server `filesystem` runs unpinned package `@modelcontextprotocol/server-filesystem`",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/filesystem/args",
+      "evidence": "npx -y @modelcontextprotocol/server-filesystem /",
+      "rationale": "`npx -y pkg`, `pkg@latest` or `uvx pkg` resolves and executes whatever the registry serves at launch time. A compromised or typosquatted release runs with your privileges on next start.",
+      "remediation": "Pin an exact version (e.g. `@modelcontextprotocol/server-filesystem@X.Y.Z`) or install once and point `command` at the binary."
+    },
+    {
+      "rule_id": "MCP001",
+      "severity": "MEDIUM",
+      "title": "MCP server `github` runs unpinned package `@modelcontextprotocol/server-github@latest`",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/github/args",
+      "evidence": "npx -y @modelcontextprotocol/server-github@latest",
+      "rationale": "`npx -y pkg`, `pkg@latest` or `uvx pkg` resolves and executes whatever the registry serves at launch time. A compromised or typosquatted release runs with your privileges on next start.",
+      "remediation": "Pin an exact version (e.g. `@modelcontextprotocol/server-github@X.Y.Z`) or install once and point `command` at the binary."
+    },
+    {
+      "rule_id": "MCP005",
+      "severity": "MEDIUM",
+      "title": "MCP server `tmp-binary` launched from a temporary directory",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/tmp-binary/command",
+      "evidence": "/tmp/mcp-server",
+      "rationale": "A bare command name is resolved by PATH at launch; a writable earlier PATH entry or a temp directory lets another process substitute the binary.",
+      "remediation": "Install the server under a user- or system-owned directory."
+    },
+    {
+      "rule_id": "MCP006",
+      "severity": "MEDIUM",
+      "title": "MCP server `filesystem` scoped to `/`",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/filesystem/args/2",
+      "evidence": "/",
+      "rationale": "Filesystem-style servers take allowed roots as arguments; `/`, `~` or the home directory exposes every credential and repository on the machine to the model.",
+      "remediation": "Pass the specific project directories instead."
+    },
+    {
+      "rule_id": "MCP005",
+      "severity": "LOW",
+      "title": "MCP server `path-binary` command `my-mcp-server` resolved via PATH",
+      "file": "fixtures/bad-mcp.json",
+      "location": "/mcpServers/path-binary/command",
+      "evidence": "my-mcp-server",
+      "rationale": "A bare command name is resolved by PATH at launch; a writable earlier PATH entry or a temp directory lets another process substitute the binary.",
+      "remediation": "Use the absolute path of the binary."
+    }
+  ],
+  "summary": {
+    "HIGH": 5,
+    "MEDIUM": 4,
+    "LOW": 1,
+    "INFO": 0
+  },
+  "report_sha256": "9fa755fe7e577563f10d453a5c6a2a4f87101d249ab9b453203a3b6f45f10892",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

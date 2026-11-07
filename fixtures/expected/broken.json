@@ -1,0 +1,35 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/broken.json",
+      "kind": "unknown",
+      "sha256": "1a8d725a7eb62bea9461ce94e10f62173faa5d625fa619cd932765c836b09f11",
+      "bytes": 47
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "GEN001",
+      "severity": "LOW",
+      "title": "File could not be parsed",
+      "file": "fixtures/broken.json",
+      "location": "",
+      "evidence": "JSONDecodeError: Illegal trailing comma before end of object: line 1 column 42 (char 41)",
+      "rationale": "An unparseable or unrecognised file is not audited. Silence here would be a false 'clean' result, so it is reported explicitly.",
+      "remediation": "Fix the syntax error; until then no rule has evaluated this file."
+    }
+  ],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 1,
+    "INFO": 0
+  },
+  "report_sha256": "098f682861a53d8795985c2a228a9f6a4d3d1c7e541064c8b6c2f2e07666db08",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

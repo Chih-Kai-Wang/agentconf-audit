@@ -1,0 +1,145 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/bad-codex.toml",
+      "kind": "codex-config",
+      "sha256": "5be6aaaa9c0977f6540a6eb771cc2ff700d6445e725e73a9ca9e35f513a77f91",
+      "bytes": 1125
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "CX001",
+      "severity": "HIGH",
+      "title": "Codex never asks for approval",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/approval_policy",
+      "evidence": "never",
+      "rationale": "`approval_policy = \"never\"` lets every command run without a human decision. Combined with `danger-full-access` (CX002) it is unattended arbitrary code execution.",
+      "remediation": "Use `on-request` or `on-failure`; reserve `never` for a disposable sandbox."
+    },
+    {
+      "rule_id": "CX001",
+      "severity": "HIGH",
+      "title": "Codex never asks for approval",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/profiles/ci/approval_policy",
+      "evidence": "never",
+      "rationale": "`approval_policy = \"never\"` lets every command run without a human decision. Combined with `danger-full-access` (CX002) it is unattended arbitrary code execution.",
+      "remediation": "Use `on-request` or `on-failure`; reserve `never` for a disposable sandbox."
+    },
+    {
+      "rule_id": "CX002",
+      "severity": "HIGH",
+      "title": "Codex sandbox disabled (danger-full-access)",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/sandbox_mode",
+      "evidence": "danger-full-access",
+      "rationale": "`sandbox_mode = \"danger-full-access\"` removes the filesystem and network sandbox; the agent can read any file and reach any host as the user.",
+      "remediation": "Use `workspace-write`; grant full access per task, not globally."
+    },
+    {
+      "rule_id": "CX003",
+      "severity": "HIGH",
+      "title": "Model provider reached over plaintext HTTP",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/openai_base_url",
+      "evidence": "http://proxy.example.invalid/v1",
+      "rationale": "Prompts, code and credentials to `base_url`/`openai_base_url` travel unencrypted to a non-loopback host.",
+      "remediation": "Use https://."
+    },
+    {
+      "rule_id": "CX004",
+      "severity": "HIGH",
+      "title": "Root-like path `/` marked trusted",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/projects/~1/trust_level",
+      "evidence": "trusted",
+      "rationale": "A `trusted` project skips the trust prompt and may auto-load that directory's instructions and MCP servers. Trusting `/` or the home directory trusts every repository; a very long trusted list suggests trust is granted reflexively.",
+      "remediation": "Remove the entry; trust individual project directories."
+    },
+    {
+      "rule_id": "CX004",
+      "severity": "HIGH",
+      "title": "Root-like path `/Users/me` marked trusted",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/projects/~1Users~1me/trust_level",
+      "evidence": "trusted",
+      "rationale": "A `trusted` project skips the trust prompt and may auto-load that directory's instructions and MCP servers. Trusting `/` or the home directory trusts every repository; a very long trusted list suggests trust is granted reflexively.",
+      "remediation": "Remove the entry; trust individual project directories."
+    },
+    {
+      "rule_id": "MCP002",
+      "severity": "HIGH",
+      "title": "Credential embedded in MCP server `search` (Google API key)",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/mcp_servers/search/env/SEARCH_API_KEY",
+      "evidence": "SEARCH_API_KEY=AIza…(len=39, sha256:92360ca017)",
+      "rationale": "Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared with every process that can read the file.",
+      "remediation": "Reference an environment variable (`${VAR}`) or a secret manager instead of the literal value."
+    },
+    {
+      "rule_id": "MCP001",
+      "severity": "MEDIUM",
+      "title": "MCP server `search` runs unpinned package `mcp-server-search`",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/mcp_servers/search/args",
+      "evidence": "uvx mcp-server-search",
+      "rationale": "`npx -y pkg`, `pkg@latest` or `uvx pkg` resolves and executes whatever the registry serves at launch time. A compromised or typosquatted release runs with your privileges on next start.",
+      "remediation": "Pin an exact version (e.g. `mcp-server-search@X.Y.Z`) or install once and point `command` at the binary."
+    },
+    {
+      "rule_id": "CX002",
+      "severity": "LOW",
+      "title": "Codex workspace-write sandbox allows network access",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/sandbox_workspace_write/network_access",
+      "evidence": "true",
+      "rationale": "`sandbox_mode = \"danger-full-access\"` removes the filesystem and network sandbox; the agent can read any file and reach any host as the user.",
+      "remediation": "Disable unless the task needs egress; network lets exfiltrated data leave."
+    },
+    {
+      "rule_id": "CX005",
+      "severity": "LOW",
+      "title": "Codex hook on `TurnEnded` has no recorded trusted hash",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/hooks/TurnEnded/0/hooks/0/command",
+      "evidence": "/Users/me/.codex/hooks/notify.sh",
+      "rationale": "Hooks run on lifecycle events with the user's privileges and belong to the trust boundary. Codex records a trusted hash per hook; a hook without one has not been approved.",
+      "remediation": "Review the script; Codex will prompt to trust it on next run."
+    },
+    {
+      "rule_id": "CX003",
+      "severity": "INFO",
+      "title": "Model provider is a loopback HTTP proxy",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/model_providers/local/base_url",
+      "evidence": "http://127.0.0.1:11434/v1",
+      "rationale": "Prompts, code and credentials to `base_url`/`openai_base_url` travel unencrypted to a non-loopback host.",
+      "remediation": "Confirm the proxy itself uses TLS upstream and is not reachable from other hosts."
+    },
+    {
+      "rule_id": "CX005",
+      "severity": "INFO",
+      "title": "Codex hook executes a shell command",
+      "file": "fixtures/bad-codex.toml",
+      "location": "/hooks/Interrupt/0/hooks/0/command",
+      "evidence": "/Users/me/.codex/hooks/on-interrupt.sh",
+      "rationale": "Hooks run on lifecycle events with the user's privileges and belong to the trust boundary. Codex records a trusted hash per hook; a hook without one has not been approved.",
+      "remediation": "Approved (trusted hash recorded). Re-review if the script changes."
+    }
+  ],
+  "summary": {
+    "HIGH": 7,
+    "MEDIUM": 1,
+    "LOW": 2,
+    "INFO": 2
+  },
+  "report_sha256": "12f5f3b7090cbe66c64b27f6b66700593f666bc0b955ce24c6d92144440c5d46",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}

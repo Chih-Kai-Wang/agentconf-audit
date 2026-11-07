@@ -1,0 +1,16 @@
+model = "gpt-5.5"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[model_providers.openai]
+name = "OpenAI"
+base_url = "https://api.openai.com/v1"
+wire_api = "responses"
+
+[mcp_servers.search]
+command = "/Users/me/.local/bin/mcp-server-search"
+args = []
+env = { SEARCH_API_KEY = "${SEARCH_API_KEY}" }
+
+[projects."/Users/me/code/project-a"]
+trust_level = "trusted"
