@@ -5,8 +5,8 @@
     {
       "path": "fixtures/bad-claude-settings.json",
       "kind": "claude-code-settings",
-      "sha256": "a5ab205f039ff8be5f4010de0b5235060430c3515ce14837492caad38c8a3c02",
-      "bytes": 985
+      "sha256": "c9115f3ed25ed64a2b7db76abd8f09cec3b4a00f74c132185fd5b6aede5259e8",
+      "bytes": 1052
     }
   ],
   "findings": [
@@ -25,7 +25,7 @@
       "severity": "HIGH",
       "title": "Bash allow-list grants `sudo`",
       "file": "fixtures/bad-claude-settings.json",
-      "location": "/permissions/allow/3",
+      "location": "/permissions/allow/5",
       "evidence": "Bash(sudo *)",
       "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
       "remediation": "Remove `sudo` from the allow list; approve such commands interactively."
@@ -93,9 +93,19 @@
     {
       "rule_id": "CC002",
       "severity": "MEDIUM",
-      "title": "Bash allow-list grants unrestricted `curl` (network egress)",
+      "title": "Bash allow-list grants arbitrary `python3` execution",
       "file": "fixtures/bad-claude-settings.json",
       "location": "/permissions/allow/2",
+      "evidence": "Bash(python3 -c *)",
+      "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
+      "remediation": "Allow only the exact scripts you run, e.g. `Bash(python3 scripts/build.py)`."
+    },
+    {
+      "rule_id": "CC002",
+      "severity": "MEDIUM",
+      "title": "Bash allow-list grants unrestricted `curl` (network egress)",
+      "file": "fixtures/bad-claude-settings.json",
+      "location": "/permissions/allow/4",
       "evidence": "Bash(curl:*)",
       "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
       "remediation": "Restrict to known hosts or approve network commands interactively."
@@ -105,7 +115,7 @@
       "severity": "MEDIUM",
       "title": "Bash allow-list entry starts with a wildcard",
       "file": "fixtures/bad-claude-settings.json",
-      "location": "/permissions/allow/4",
+      "location": "/permissions/allow/6",
       "evidence": "Bash(*deploy*)",
       "rationale": "A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
       "remediation": "Anchor the pattern to a command name; a leading `*` matches any command."
@@ -163,11 +173,11 @@
   ],
   "summary": {
     "HIGH": 7,
-    "MEDIUM": 6,
+    "MEDIUM": 7,
     "LOW": 1,
     "INFO": 1
   },
-  "report_sha256": "9349d24528aed6b33a53d3e0409668e4ffae70ead6272a82b16da80f3a73cf23",
+  "report_sha256": "d4e83ccba3b320da7de1938a3a8d071b1da49be90e1db385521739aeb1873954",
   "hash_covers": [
     "inputs",
     "findings"

@@ -16,7 +16,7 @@ Severity is the default for a full match; a rule may emit a lower severity for a
 - **Default severity:** MEDIUM
 - **Applies to:** `claude-code-settings`
 - **Why it matters:** A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool (`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.
-- **Not caught:** Only the first token is classified. `Bash(git *)` is not flagged even though git hooks and aliases can run code; wrapper scripts with innocent names are not inspected.
+- **Not caught:** Only the first token is classified. `Bash(git *)` is not flagged even though git hooks and aliases can run code; wrapper scripts with innocent names are not inspected. An interpreter bound to a named script (`Bash(python3 run.py *)`) is not flagged, although that script's arguments are unrestricted.
 
 ## CC003 · Permission prompts bypassed by default
 

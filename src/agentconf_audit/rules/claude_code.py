@@ -57,7 +57,8 @@ def cc001(doc: Document) -> Iterator[Finding]:
     rationale="A prefix rule for an interpreter (`python3 *`), a downloader (`curl *`), a privilege tool "
               "(`sudo *`) or a leading wildcard (`*foo*`) is equivalent to unrestricted execution.",
     not_caught="Only the first token is classified. `Bash(git *)` is not flagged even though git hooks and "
-               "aliases can run code; wrapper scripts with innocent names are not inspected.",
+               "aliases can run code; wrapper scripts with innocent names are not inspected. An interpreter bound to a "
+               "named script (`Bash(python3 run.py *)`) is not flagged, although that script's arguments are unrestricted.",
 ))
 def cc002(doc: Document) -> Iterator[Finding]:
     meta = _m("CC002")
@@ -74,11 +75,14 @@ def cc002(doc: Document) -> Iterator[Finding]:
             continue
         cmd = toks[0].rsplit("/", 1)[-1]
         has_wild = inner.endswith("*") or ":*" in inner
+        # `python3 scripts/run.py *` is bound to one script; `python3 *`, `python3 -c *`, `python3 -m *` are not.
+        nxt = toks[1] if len(toks) > 1 else ""
+        bound_to_script = bool(nxt) and not nxt.startswith(("-", "*")) and "*" not in nxt
         if cmd in DESTRUCTIVE:
             yield finding(meta, doc, ptr, f"Bash({inner})", severity="HIGH",
                           title=f"Bash allow-list grants `{cmd}`",
                           remediation=f"Remove `{cmd}` from the allow list; approve such commands interactively.")
-        elif cmd in INTERPRETERS and has_wild:
+        elif cmd in INTERPRETERS and has_wild and not bound_to_script:
             yield finding(meta, doc, ptr, f"Bash({inner})",
                           title=f"Bash allow-list grants arbitrary `{cmd}` execution",
                           remediation=f"Allow only the exact scripts you run, e.g. `Bash({cmd} scripts/build.py)`.")

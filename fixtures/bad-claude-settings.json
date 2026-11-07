@@ -11,6 +11,8 @@
     "allow": [
       "Bash(*)",
       "Bash(python3 *)",
+      "Bash(python3 -c *)",
+      "Bash(node scripts/build.js *)",
       "Bash(curl:*)",
       "Bash(sudo *)",
       "Bash(*deploy*)",
