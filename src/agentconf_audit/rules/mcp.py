@@ -58,7 +58,8 @@ def mcp001(doc: Document) -> Iterator[Finding]:
     applies_to=MCP_KINDS,
     rationale="Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared "
               "with every process that can read the file.",
-    not_caught="Secrets in files the server reads itself (`.env`, keychains) are out of scope.",
+    not_caught="Secrets in files the server reads itself (`.env`, keychains) are out of scope. Any value containing `$VAR`/`${VAR}` "
+               "is treated as an indirection and skipped; only the listed credential formats and secret-like key names are recognised.",
 ))
 def mcp002(doc: Document) -> Iterator[Finding]:
     meta = _m("MCP002")

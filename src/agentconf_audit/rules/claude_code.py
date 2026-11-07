@@ -94,7 +94,8 @@ def cc002(doc: Document) -> Iterator[Finding]:
     applies_to=(KIND_CLAUDE_SETTINGS, KIND_CLAUDE_DESKTOP),
     rationale="`permissions.defaultMode` of `bypassPermissions`/`dontAsk`, `skipDangerousModePermissionPrompt`, "
               "or the Desktop bypass opt-in removes the human from every tool call.",
-    not_caught="Bypass enabled per-invocation on the command line (`--dangerously-skip-permissions`) leaves no trace in config.",
+    not_caught="Bypass enabled per-invocation on the command line (`--dangerously-skip-permissions`) leaves no trace in config. "
+               "The Desktop keys `bypassPermissionsOptInByAccount`/`bypassPermissionsGateByAccount` are undocumented; their meaning is inferred from the names.",
 ))
 def cc003(doc: Document) -> Iterator[Finding]:
     meta = _m("CC003")
@@ -170,7 +171,8 @@ def cc004(doc: Document) -> Iterator[Finding]:
     applies_to=(KIND_CLAUDE_SETTINGS,),
     rationale="`env` values are injected into every tool process and are easy to leak via `settings.json` "
               "backups, dotfile repositories and screenshots.",
-    not_caught="Secrets passed through a helper (`apiKeyHelper`) or the OS keychain are the right pattern and are not inspected.",
+    not_caught="Secrets passed through a helper (`apiKeyHelper`) or the OS keychain are the right pattern and are not inspected. "
+               "Any value containing `$VAR` or `${VAR}` is treated as an indirection, so a literal secret that happens to contain `$word` is skipped.",
 ))
 def cc005(doc: Document) -> Iterator[Finding]:
     from ..redact import is_placeholder, is_secret_key, match_secret_value

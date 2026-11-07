@@ -23,7 +23,7 @@ Severity is the default for a full match; a rule may emit a lower severity for a
 - **Default severity:** HIGH
 - **Applies to:** `claude-code-settings`, `claude-desktop-config`
 - **Why it matters:** `permissions.defaultMode` of `bypassPermissions`/`dontAsk`, `skipDangerousModePermissionPrompt`, or the Desktop bypass opt-in removes the human from every tool call.
-- **Not caught:** Bypass enabled per-invocation on the command line (`--dangerously-skip-permissions`) leaves no trace in config.
+- **Not caught:** Bypass enabled per-invocation on the command line (`--dangerously-skip-permissions`) leaves no trace in config. The Desktop keys `bypassPermissionsOptInByAccount`/`bypassPermissionsGateByAccount` are undocumented; their meaning is inferred from the names.
 
 ## CC004 · Lifecycle hook executes a shell command
 
@@ -37,7 +37,7 @@ Severity is the default for a full match; a rule may emit a lower severity for a
 - **Default severity:** HIGH
 - **Applies to:** `claude-code-settings`
 - **Why it matters:** `env` values are injected into every tool process and are easy to leak via `settings.json` backups, dotfile repositories and screenshots.
-- **Not caught:** Secrets passed through a helper (`apiKeyHelper`) or the OS keychain are the right pattern and are not inspected.
+- **Not caught:** Secrets passed through a helper (`apiKeyHelper`) or the OS keychain are the right pattern and are not inspected. Any value containing `$VAR` or `${VAR}` is treated as an indirection, so a literal secret that happens to contain `$word` is skipped.
 
 ## CC006 · Project MCP servers auto-approved
 
@@ -121,7 +121,7 @@ Severity is the default for a full match; a rule may emit a lower severity for a
 - **Default severity:** HIGH
 - **Applies to:** `claude-desktop-config`, `claude-code-state`, `claude-code-settings`, `mcp-servers-json`, `codex-config`
 - **Why it matters:** Secrets in `env`, `args`, `headers` or the URL of a server are stored in plaintext and shared with every process that can read the file.
-- **Not caught:** Secrets in files the server reads itself (`.env`, keychains) are out of scope.
+- **Not caught:** Secrets in files the server reads itself (`.env`, keychains) are out of scope. Any value containing `$VAR`/`${VAR}` is treated as an indirection and skipped; only the listed credential formats and secret-like key names are recognised.
 
 ## MCP003 · Remote MCP server reached over plaintext HTTP
 
