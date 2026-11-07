@@ -1,0 +1,35 @@
+{
+  "tool": "agentconf-audit",
+  "version": "0.1.0",
+  "inputs": [
+    {
+      "path": "fixtures/unparseable.toml",
+      "kind": "unknown",
+      "sha256": "f9d3c7f6ec88ca9b9d9cbac121d7f59614f2d740d6974db31b9e3a25957a0ead",
+      "bytes": 42
+    }
+  ],
+  "findings": [
+    {
+      "rule_id": "GEN001",
+      "severity": "LOW",
+      "title": "File could not be parsed",
+      "file": "fixtures/unparseable.toml",
+      "location": "",
+      "evidence": "TOMLDecodeError at line 1 column 25",
+      "rationale": "An unparseable or unrecognised file is not audited. Silence here would be a false 'clean' result, so it is reported explicitly.",
+      "remediation": "Fix the syntax error; until then no rule has evaluated this file."
+    }
+  ],
+  "summary": {
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 1,
+    "INFO": 0
+  },
+  "report_sha256": "859fdc610922490fdd0d5462df123078e37077ec6111c27a8f85314804f43a51",
+  "hash_covers": [
+    "inputs",
+    "findings"
+  ]
+}
