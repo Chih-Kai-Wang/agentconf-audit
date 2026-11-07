@@ -16,7 +16,7 @@ $ agentconf-audit scan fixtures/bad-codex.toml fixtures/bad-mcp.json --disable G
          fix: Use `workspace-write`; grant full access per task, not globally.
 [HIGH  ] MCP002  Credential embedded in MCP server `github` (GitHub token)
          fixtures/bad-mcp.json  /mcpServers/github/env/GITHUB_PERSONAL_ACCESS_TOKEN
-         evidence: GITHUB_PERSONAL_ACCESS_TOKEN=ghp_…(len=40, sha256:7b69181485)
+         evidence: GITHUB_PERSONAL_ACCESS_TOKEN=ghp_…(len=42, sha256:7b69181485)
          fix: Reference an environment variable (`${VAR}`) or a secret manager instead of the literal value.
 …
 2 file(s) scanned · HIGH 12 · MEDIUM 5 · LOW 3 · INFO 2
