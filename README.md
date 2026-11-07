@@ -1,5 +1,7 @@
 # agentconf-audit
 
+[![ci](https://github.com/f0909172434/agentconf-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/f0909172434/agentconf-audit/actions/workflows/ci.yml) ![python](https://img.shields.io/badge/python-3.11%2B-blue) ![deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen) ![license](https://img.shields.io/badge/license-MIT-lightgrey)
+
 **Static security audit of AI coding-agent configuration — Claude Code, Claude Desktop, MCP servers, OpenAI Codex — with evidence-attached, replayable reports.**
 
 Zero runtime dependencies (Python ≥ 3.11 standard library). Read-only. Secrets are never printed, only a prefix, length and truncated SHA-256.
@@ -109,7 +111,8 @@ Recognised inputs: `~/.claude/settings.json` and project `.claude/settings*.json
 
 ```bash
 uv sync --group dev
-uv run pytest -q                      # 71 tests, < 1 s
+uv run pytest -q                      # 72 tests, < 1 s
+uv run --python 3.11 --isolated --with pytest pytest -q   # oldest supported interpreter
 uv run agentconf-audit rules --markdown > docs/RULES.md
 ```
 
