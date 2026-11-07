@@ -5,20 +5,25 @@
 Zero runtime dependencies (Python ≥ 3.11 standard library). Read-only. Secrets are never printed, only a prefix, length and truncated SHA-256.
 
 ```
-$ agentconf-audit scan --auto          # the author's machine, 2026-11-07, paths shortened
+$ agentconf-audit scan fixtures/bad-codex.toml fixtures/bad-mcp.json --disable GEN002
 [HIGH  ] CX001  Codex never asks for approval
-         ~/.codex/config.toml  /approval_policy
+         fixtures/bad-codex.toml  /approval_policy
          evidence: never
+         fix: Use `on-request` or `on-failure`; reserve `never` for a disposable sandbox.
 [HIGH  ] CX002  Codex sandbox disabled (danger-full-access)
-         ~/.codex/config.toml  /sandbox_mode
+         fixtures/bad-codex.toml  /sandbox_mode
          evidence: danger-full-access
-[HIGH  ] CX004  Root-like path `/` marked trusted
-         ~/.codex/config.toml  /projects/~1/trust_level
-         evidence: trusted
+         fix: Use `workspace-write`; grant full access per task, not globally.
+[HIGH  ] MCP002  Credential embedded in MCP server `github` (GitHub token)
+         fixtures/bad-mcp.json  /mcpServers/github/env/GITHUB_PERSONAL_ACCESS_TOKEN
+         evidence: GITHUB_PERSONAL_ACCESS_TOKEN=ghp_…(len=40, sha256:7b69181485)
+         fix: Reference an environment variable (`${VAR}`) or a secret manager instead of the literal value.
 …
-4 file(s) scanned · HIGH 4 · MEDIUM 10 · LOW 2 · INFO 3
-report_sha256 91469cb664007c696a5ead33a6fd9e0ddd49ac9827d1c9ebc2cc702cffabc8e4
+2 file(s) scanned · HIGH 12 · MEDIUM 5 · LOW 3 · INFO 2
+report_sha256 81157b7d24f7c8a224120b40d523aaadf28e52b7a6035e25d0239c0e8ce4ef7b
 ```
+
+Run against the author's own machine on 2026-11-07 it reported 4 HIGH findings in a real `~/.codex/config.toml` (approval never, full-access sandbox, `/` and `~` trusted); the exact output is kept private.
 
 ## Why
 
