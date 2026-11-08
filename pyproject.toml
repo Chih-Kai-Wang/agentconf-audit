@@ -22,7 +22,7 @@ dependencies = []
 agentconf-audit = "agentconf_audit.cli:main"
 
 [project.urls]
-Repository = "https://github.com/f0909172434/agentconf-audit"
+Repository = "https://github.com/Chih-Kai-Wang/agentconf-audit"
 
 [dependency-groups]
 dev = ["pytest>=8"]

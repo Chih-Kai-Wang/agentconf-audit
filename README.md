@@ -1,6 +1,6 @@
 # agentconf-audit
 
-[![ci](https://github.com/f0909172434/agentconf-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/f0909172434/agentconf-audit/actions/workflows/ci.yml) ![python](https://img.shields.io/badge/python-3.11%2B-blue) ![deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen) ![license](https://img.shields.io/badge/license-MIT-lightgrey)
+[![ci](https://github.com/Chih-Kai-Wang/agentconf-audit/actions/workflows/ci.yml/badge.svg)](https://github.com/Chih-Kai-Wang/agentconf-audit/actions/workflows/ci.yml) ![python](https://img.shields.io/badge/python-3.11%2B-blue) ![deps](https://img.shields.io/badge/runtime%20deps-0-brightgreen) ![license](https://img.shields.io/badge/license-MIT-lightgrey)
 
 **Static security audit of AI coding-agent configuration — Claude Code, Claude Desktop, MCP servers, OpenAI Codex — with evidence-attached, replayable reports.**
 
@@ -43,10 +43,10 @@ These settings are easy to turn on during a deadline and easy to forget. `agentc
 
 ```bash
 # one-off, no install
-uvx --from git+https://github.com/f0909172434/agentconf-audit agentconf-audit scan --auto
+uvx --from git+https://github.com/Chih-Kai-Wang/agentconf-audit agentconf-audit scan --auto
 
 # or install
-uv tool install git+https://github.com/f0909172434/agentconf-audit
+uv tool install git+https://github.com/Chih-Kai-Wang/agentconf-audit
 agentconf-audit scan --auto                      # well-known per-user locations + ./.mcp.json
 agentconf-audit scan path/to/.mcp.json ~/.codex  # files or directories
 agentconf-audit scan --auto --format md -o audit.md
@@ -57,7 +57,7 @@ agentconf-audit rules                            # every rule, its rationale and
 Exit codes: `0` nothing at or above `--fail-on` (default `high`), `1` findings at or above it, `2` usage or I/O error, `3` report hash does not verify. That makes it a CI gate:
 
 ```yaml
-- run: uvx --from git+https://github.com/f0909172434/agentconf-audit agentconf-audit scan .mcp.json .claude/settings.json --fail-on medium
+- run: uvx --from git+https://github.com/Chih-Kai-Wang/agentconf-audit agentconf-audit scan .mcp.json .claude/settings.json --fail-on medium
 ```
 
 ## What it checks
